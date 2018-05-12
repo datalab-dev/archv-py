@@ -34,7 +34,7 @@ def symmetry_test(matches, matches2):
     sym_matches = []
     for m in matches:
         for t in matches2:
-            if m[0].queryIdx == t[0].trainIdx and t[0].queryIdx == m.trainIdx:
+            if m.queryIdx == t.trainIdx and t.queryIdx == m.trainIdx:
                 sym_matches.append(m)
                 break
     return sym_matches

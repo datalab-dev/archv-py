@@ -23,12 +23,7 @@ good = ratio_test(matches)
 good2 = ratio_test(matches2)
 
 # Apply Symmetry test
-sym = []
-for m in good:
-    for m2 in good2:
-        if m.queryIdx == m2.trainIdx and m2.queryIdx == m.trainIdx:
-            sym.append(m)
-            break
+sym = symmetry_test(good, good2)
     
 print ("num matches: ", len(matches))
 print ("post ratio test: ", len(good))
