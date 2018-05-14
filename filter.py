@@ -5,9 +5,6 @@ import numpy as np
 import cv2
 
 
-# ===================================================================
-#   Size and Response Time filter
-# ===================================================================
 def filter_keypoints(keypoints, min_size, min_response):
     filtered = []
     for k in keypoints:
@@ -16,20 +13,6 @@ def filter_keypoints(keypoints, min_size, min_response):
     return filtered
 
 
-# ===================================================================
-#   Ratio Test
-#
-#   taken from opencv3.4 documentation on feature matching in python
-#   https://docs.opencv.org/3.4/dc/dc3/tutorial_py_matcher.html
-#
-#   only keep the matches where the best match is significantly
-#   different from the second best match. In this case, the best
-#   match is less than 80% of the second best match. The lower 
-#   ratio (r) the more matches will be filtered out
-#   
-#   input: matches list (the output of bf.knnMatch with k=2)
-#   return: matches list (all the matches that pass the ratio test)
-# ===================================================================
 def ratio_test(matches):
     good_matches = []
     r = .75
@@ -39,9 +22,6 @@ def ratio_test(matches):
     return good_matches
 
 
-# ===================================================================
-#   Symmetry Test
-# ===================================================================
 def symmetry_test(matches, matches2):
     sym_matches = []
     for m in matches:
@@ -51,4 +31,34 @@ def symmetry_test(matches, matches2):
                 break
     return sym_matches
 
+def ransac_test(keypoints, keypoints2, sym_matches):
+    ransac_matches = []
 
+    ## convert the good keypoints to point2f for cv2.findFundamentalMat
+    points = []
+    points2 = []
+    for i in range(0, len(sym_matches)):
+        index = sym_matches[i].queryIdx
+        index2 = sym_matches[i].trainIdx
+
+        point = keypoints[index].pt
+        point2 = keypoints2[index2].pt
+
+        points.append(point)
+        points2.append(point2)
+
+    pts = np.array(points)
+    pts2 = np.array(points2)
+
+    # get inliers matrix
+    # need minimum of 4 points
+    if len(pts) > 4 and len(pts2) > 4:
+        fundamental, inliers = cv2.findFundamentalMat(pts,pts2,cv2.RANSAC)
+        # use inliers to extract only the matches that are inliers
+        for i, inlier in enumerate(inliers):
+            if inlier != 0:
+                ransac_matches.append(sym_matches[i])
+    else:
+        ransac_matches = sym_matches
+
+    return ransac_matches
