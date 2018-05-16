@@ -21,7 +21,7 @@ for i,fname in enumerate(filenames):
     surf = cv2.xfeatures2d.SURF_create(3000, 10, 10)
     keys = surf.detect(img, None)
     keypoints = filter_keypoints(keys, 50, 500)
-    k, descriptors = surf.compute(img, keypoints)
+    temp, descriptors = surf.compute(img, keypoints)
 
     write_to_file(ofile, keypoints, descriptors)
     

@@ -17,10 +17,10 @@ def ratio_test(matches):
     good_matches = []
     r = .75
     for m,n in matches:
-        if m.distance < r*n.distance:
-            good_matches.append(m)
+        if m and n:
+            if m.distance < r*n.distance:
+                good_matches.append(m)
     return good_matches
-
 
 def symmetry_test(matches, matches2):
     sym_matches = []
