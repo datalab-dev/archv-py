@@ -3,9 +3,13 @@
 
 import numpy as np
 import cv2
-from filter import filter_keypoints
 
-## function for parsing command line arguments
+def filter_keypoints(keypoints, min_size, min_response):
+    filtered = []
+    for k in keypoints:
+        if k.size > min_size and k.response > min_response:
+            filtered.append(k)
+    return filtered
 
 def compute_and_filter (img, minh, octaves, layers, msize, mresponse):
     surf = cv2.xfeatures2d.SURF_create(minh, octaves, layers) #Opencv 3+

@@ -4,15 +4,6 @@
 import numpy as np
 import cv2
 
-
-def filter_keypoints(keypoints, min_size, min_response):
-    filtered = []
-    for k in keypoints:
-        if k.size > min_size and k.response > min_response:
-            filtered.append(k)
-    return filtered
-
-
 def ratio_test(matches):
     good_matches = []
     r = .75
