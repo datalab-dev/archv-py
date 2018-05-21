@@ -3,12 +3,17 @@
 
 import numpy as np
 import cv2
+from filter import filter_keypoints
 
 ## function for parsing command line arguments
 
+def compute_and_filter (img, minh, octaves, layers, msize, mresponse):
+    surf = cv2.xfeatures2d.SURF_create(minh, octaves, layers) #Opencv 3+
+    keys = surf.detect(img, None)
+    keypoints = filter_keypoints(keys, msize, mresponse)
 
-## function to write keypoints and descriptors to file
-# ofile should be full path
+    return surf.compute(img, keypoints)
+
 def write_to_file(ofile, keypoints, descriptors):
     kps = []
     for p in keypoints:
