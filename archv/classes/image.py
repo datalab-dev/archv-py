@@ -46,11 +46,11 @@ class Image():
         kps = np.array(kps)
 
         cv_file = cv2.FileStorage(ofile, cv2.FILE_STORAGE_WRITE)
-        cv_file.write("minHessian", self.minh)
+        cv_file.write("min_hessian", self.minh)
         cv_file.write("octaves", self.octaves)
         cv_file.write("layers", self.layers)
-        cv_file.write("minSize", self.mins)
-        cv_file.write("minResponse", self.minr)
+        cv_file.write("min_size", self.mins)
+        cv_file.write("min_response", self.minr)
         cv_file.write("keypoints", kps)
         cv_file.write("descriptors", self.descriptors)
         cv_file.release()
@@ -62,6 +62,11 @@ class Image():
         cv_file = cv2.FileStorage(ifile, cv2.FILE_STORAGE_READ)
         kps = cv_file.getNode("keypoints").mat()
         self.descriptors = cv_file.getNode("descriptors").mat()
+        self.minh = cv_file.getNode("min_hessian")
+        self.octaves = cv_file.getNode("octaves")
+        self.layers = cv_file.getNode("layers")
+        self.mins = cv_file.getNode("min_size")
+        self.minr = cv_file.getNode("min_response")
         cv_file.release()
 
         for p in kps:
