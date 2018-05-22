@@ -8,6 +8,7 @@ import yaml
 import os
 import glob
 import time
+from joblib import Parallel, delayed
 from classes.image import Image
 
 
@@ -18,9 +19,19 @@ def parse_arguments():
     parser.add_argument("-i", required=True, help="path to image directory", type=str)
     parser.add_argument("-o", required=True, help="path to output directory to store keypoint files", type=str)
     parser.add_argument("-p", required=True, help="path to parameter file for surf", type=str)
+    parser.add_argument("-n", default=1, help="number of cores", type=int)
 
     args = parser.parse_args()
     return args
+
+def process_image(fname, params):
+    ofile = args.o + "/" + fname.split('/')[-1].split('.')[0] + '.yml'
+    print ("processing ", ofile)
+
+    img = Image(fname) 
+    img.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
+    img.write_to_file(ofile)
+    return
 
 def main(args):
 
@@ -34,21 +45,8 @@ def main(args):
     # read SURF parameters into dictionary
     params = yaml.load(open(args.p))
 
-    ## loop over all the images
-    for i,fname in enumerate(filenames):
-
-        # to track status
-        if i % 50 == 0:
-            print ("processing image ", i, "out of ", len(filenames) - 1)
-
-        # generate output filename
-        ofile = args.o + "/" + fname.split('/')[-1].split('.')[0] + '.yml'
+    Parallel(n_jobs=args.n)(delayed(process_image)(fname, params) for fname in filenames)
         
-        img = Image(fname) 
-        img.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
-        img.write_to_file(ofile)
-
-
 if __name__ == "__main__":
     start = time.time()    
     args = parse_arguments()
