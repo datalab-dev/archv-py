@@ -7,7 +7,9 @@ import cv2
 class Image():
 
     def __init__(self, image):
-        self.image = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
+        self.image = None
+        if image != None:
+            self.image = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
         self.keypoints = []
         self.descriptors = []
 
