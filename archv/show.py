@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Usage: python show_keypoints.py /path/to/image -minh 2000 -o 8 -l 8 -s 50 -r 500 
-   or: python show_keypoints.py /path/to/image -k /path/to/keypointfile
+Usage: python show.py /path/to/image -minh 2000 -o 8 -l 8 -s 50 -r 500 
+   or: python show.py /path/to/image -k /path/to/keypointfile
 
 A simple script that is used for tuning the surf parameters used by archv for the imageset. 
 This is important becuase each imageset has generally different levels of detail and can require very different
