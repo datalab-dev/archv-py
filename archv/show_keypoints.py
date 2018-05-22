@@ -14,14 +14,10 @@ import numpy as np
 import cv2
 import sys
 import argparse
-from filter import filter_keypoints
-from utils import compute_and_filter, read_from_file
+from classes.image import Image
 
 def parse_arguments ():
-    """ 
-    Basic parser for the required positional arguments to show_keypoints 
-    returns dictionary of arguments
-    """
+    """ Basic parser for the required positional arguments to show_keypoints """
     parser = argparse.ArgumentParser()
 
     parser.add_argument("image", help="path to input image file", type=str)
@@ -32,30 +28,26 @@ def parse_arguments ():
     parser.add_argument("-o", help="Set the number of octaves of scale space for the image", type=int, default=8)
     parser.add_argument("-l", help="Set the number of octave layers", type=int, default=8)
     parser.add_argument("-s", help="Set the minimum size of keypoints", type=int, default=50)
-    parser.add_argument("-r", help="Set the minimum response of keypoints", default=500.0)
+    parser.add_argument("-r", help="Set the minimum response of keypoints", type=float, default=500.0)
 
     args = parser.parse_args()
     return args
 
 def main(args):
-    """
-    detect, filter and display the keypoints found for a given input image using specified SURF parameters 
+    """ detect, filter and display the keypoints found for a given input image using specified SURF parameters """ 
 
-    arguments are passed in from the parse_arguments function. order for arguments:
-    show_keypoints.py minh octaves layers mszie mresponse path/to/image
-    """ 
-    img = cv2.imread(args.image, cv2.IMREAD_GRAYSCALE)
+    img = Image(args.image) 
 
     if args.k:
-        keypoints, descriptors = read_from_file(args.k)
+        img.read_from_file(args.k)
 
     else:
-        keypoints, descriptors = compute_and_filter (img, args.minh, args.o, args.l, args.s, args.r)
+        img.compute_and_filter(args.minh, args.o, args.l, args.s, args.r)
 
 
-    img = cv2.drawKeypoints(img, keypoints, None, (255,0,0),4)
+    oimg = cv2.drawKeypoints(img.image, img.keypoints, None, (255,0,0),4)
 
-    cv2.imshow("Image", img)
+    cv2.imshow("Image", oimg)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 

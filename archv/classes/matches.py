@@ -8,7 +8,7 @@ class Matches(object):
 
     def __init__(self, descriptors, descriptors2):
         self.train_descriptors = descriptors
-        self.query_descriptors = descriptors
+        self.query_descriptors = descriptors2
         self.train_matches = cv2.BFMatcher().knnMatch#
         return
 
