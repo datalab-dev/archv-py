@@ -1,42 +1,61 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+"""
+Usage: python match.py /path/to/image /path/to/image2 -p /path/to/param.yml 
+
+A simple script to visualize the matches between two images
+"""
+
 import numpy as np
 import cv2
+import yaml
+import argparse
 from matplotlib import pyplot as plt
-from filter import ratio_test, symmetry_test, ransac_test
+from classes.image import Image
+from classes.matches import Matches
 
-img1 = cv2.imread('./images/examples/man.jpg',0)  # queryImage
-img2 = cv2.imread('./images/examples/man2.jpg',0) # trainImage
 
-# Initiate SIFT detector
-surf = cv2.xfeatures2d.SURF_create(2000, 8, 8)
+def parse_arguments ():
+    """ Basic parser for the command line arguments"""
+    parser = argparse.ArgumentParser()
 
-# find the keypoints and descriptors with SIFT
-kp1, des1 = surf.detectAndCompute(img1,None)
-kp2, des2 = surf.detectAndCompute(img2,None)
+    parser.add_argument("image1", help="path to query image", type=str)
+    parser.add_argument("image2", help="path to train image", type=str)
+    parser.add_argument("-p", required=True, help="path to yml file surf parameters", type=str)
 
-# BFMatcher with default params
-bf = cv2.BFMatcher()
-matches = bf.knnMatch(des1,des2, k=2)
-matches2 = bf.knnMatch(des2, des1, k=2)
+    args = parser.parse_args()
+    return args
 
-# Apply ratio test
-good = ratio_test(matches)
-good2 = ratio_test(matches2)
 
-# Apply Symmetry test
-sym = symmetry_test(good, good2)
+def main(args):
+    """ detect and filter keypoints for both images, then find good matches """
+    img1 = Image(args.image1)
+    img2 = Image(args.image2)
+
+    # compute keypoints and descriptors for both images
+    params = yaml.load(open(args.p))
+    img1.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
+    img2.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
+
     
-# Apply Ransac test
-ransac = ransac_test (kp1, kp2, sym) 
+    matcher = Matches(img1, img2)
+    matcher.ratio_test()
+    matcher.symmetry_test()
+    matcher.ransac_test()
 
-r2 = []
-for r in ransac:
-    r2.append([r])
+    r2 = []
+    for r in matcher.ransac_matches:
+        r2.append([r])
 
-print ("num matches: ", len(matches))
-print ("post ratio test: ", len(good))
-print ("post symmetry test: ", len(sym))
-print ("post ransac test: ", len(ransac))
+    print ("num matches: ", len(matcher.matches1))
+    print ("post ratio test: ", len(matcher.good_matches1))
+    print ("post symmetry test: ", len(matcher.symm_matches))
+    print ("post ransac test: ", len(matcher.ransac_matches))
 
-img3 = cv2.drawMatchesKnn(img1,kp1,img2,kp2,r2, None ,flags=2, matchColor=(255,0,0))
-plt.imshow(img3), plt.show()
+    img3 = cv2.drawMatchesKnn(img1.image,img1.keypoints,img2.image,img2.keypoints, r2, None ,flags=2, matchColor=(255,0,0))
+    plt.imshow(img3), plt.show()
 
+if __name__ == "__main__":
+    args = parse_arguments()
+    main(args)
