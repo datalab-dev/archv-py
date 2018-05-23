@@ -14,7 +14,7 @@ class Matches():
         # compute matches image 1 on image 2 and image 2 on image 1
         bf = cv2.BFMatcher()
         self.matches1 = bf.knnMatch(self.image1.descriptors, self.image2.descriptors, k=2) #k=2 for ratiotest
-        self.matches2 = bf.knnMatch(self.image1.descriptors, self.image2.descriptors, k=2)
+        self.matches2 = bf.knnMatch(self.image2.descriptors, self.image1.descriptors, k=2)
 
         self.good_matches1 = []
         self.good_matches2 = []
@@ -28,6 +28,7 @@ class Matches():
             if m and n:
                 if m.distance < r*n.distance:
                     self.good_matches1.append(m)
+
         for m,n in self.matches2:
             if m and n:
                 if m.distance < r*n.distance:
