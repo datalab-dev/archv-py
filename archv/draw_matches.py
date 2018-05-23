@@ -22,7 +22,7 @@ def parse_arguments ():
 
     parser.add_argument("image1", help="path to query image", type=str)
     parser.add_argument("image2", help="path to train image", type=str)
-    parser.add_argument("-p", required=True, help="path to yml file surf parameters", type=str)
+    parser.add_argument("-p", default="parameters/flickr.yml", help="path to yml file surf parameters", type=str)
 
     args = parser.parse_args()
     return args
