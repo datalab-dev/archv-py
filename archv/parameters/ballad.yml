@@ -1,0 +1,8 @@
+# Surf Parameters
+min_hessian: 2000
+octaves: 8
+layers: 8
+
+# Filter Parameters
+min_size: 75
+min_response: 500.0

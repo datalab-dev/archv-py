@@ -14,6 +14,7 @@ import argparse
 from matplotlib import pyplot as plt
 from classes.image import Image
 from classes.matches import Matches
+from filter import *
 
 
 def parse_arguments ():
@@ -37,6 +38,9 @@ def main(args):
     params = yaml.load(open(args.p))
     img1.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
     img2.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
+
+    print ("kp1 : ", len(img1.keypoints))
+    print ("kp2 : ", len(img2.keypoints))
 
     
     matcher = Matches(img1, img2)
