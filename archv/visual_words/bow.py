@@ -32,11 +32,6 @@ def parse_arguments():
     args = parser.parse_args()
     return args
 
-def get_descriptors(fname):
-    img = Image(None)
-    img.read_from_file(fname)
-    return img.descriptors
-
 def find_best_match(descriptor, vocab):
     min = distance.cosine(descriptor, vocab[0])
     min_index = 0
@@ -47,41 +42,56 @@ def find_best_match(descriptor, vocab):
             min_index = i
     return min_index
 
+def process_files(fname, vocab):
+    # read in keypoints
+    img = Image(None)
+    img.read_from_file(fname)
+
+    # histogram
+    hist = []
+    res = ""
+
+    # for each descriptor, find vocab word that best matches it
+    if not img.descriptors is None:
+        for d in img.descriptors:
+            index = find_best_match(d, vocab)
+            hist.append(str(index))
+        res = ",".join(hist)
+
+    # write histogram to file
+    ofile = args.o + fname.split('/')[-1]
+    o = open (ofile, "w")
+    print (res, file=o)
+    print(fname, ofile)
+
+    return
+
+    
 
 def main(args):
 
     # get filelist of keypoint files
-    filenames = glob.glob(os.path.join(args.k, "*.yml"))
+    files = glob.glob(os.path.join(args.k, "*.yml"))
+    filenames = []
+
+    # filter filenames
+    for fname in files:
+       short = fname.split('/')[-1]
+       if not os.path.isfile(args.o + short):
+       	  filenames.append(fname)
+       
 
     # read in dictionary
     dict_file = cv2.FileStorage(args.d, cv2.FILE_STORAGE_READ)
     vocab = dict_file.getNode("vocabulary").mat()
 
-    for fname in filenames:
-        # read in keypoints
-        img = Image(None)
-        img.read_from_file(fname)
+    # if doesn't exist, create output directory
+    if not os.path.exists(args.o):
+        os.makedirs(args.o)
 
-        # histogram
-        hist = []
+    Parallel(n_jobs=args.n)(delayed(process_files)(fname, vocab) for fname in filenames)
 
-        # if doesn't exist, create output directory
-        if not os.path.exists(args.o):
-            os.makedirs(args.o)
 
-        # for each descriptor, find vocab word that best matches it
-        for d in img.descriptors:
-            index = find_best_match(d, vocab)
-            hist.append(vocab[index])
-
-        hist = np.array(hist)
-
-        # write histogram to file
-        ofile = args.o + fname.split('/')[-1]
-        dict_file = cv2.FileStorage(ofile, cv2.FILE_STORAGE_WRITE)
-        dict_file.write("descriptors", hist)
-
-    
 
 if __name__ == "__main__":
     start = time.time()
