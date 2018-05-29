@@ -58,13 +58,8 @@ def process_files(fname, vocab):
             hist.append(str(index))
         res = ",".join(hist)
 
-    # write histogram to file
-    ofile = args.o + fname.split('/')[-1]
-    o = open (ofile, "w")
-    print (res, file=o)
-    print(fname, ofile)
 
-    return
+    return fname, res
 
     
 
@@ -89,9 +84,15 @@ def main(args):
     if not os.path.exists(args.o):
         os.makedirs(args.o)
 
-    Parallel(n_jobs=args.n)(delayed(process_files)(fname, vocab) for fname in filenames)
-
-
+    fnames, results = Parallel(n_jobs=args.n)(delayed(process_files)(fname, vocab) for fname in filenames)
+    
+    # for each histogram
+    for res in results:
+        # write histogram to file
+        ofile = args.o + fname.split('/')[-1]
+        o = open (ofile, "w")
+        print (res, file=o)
+        print(fname, ofile)
 
 if __name__ == "__main__":
     start = time.time()
