@@ -15,8 +15,8 @@ import time
 from scipy.spatial import distance
 from random import shuffle
 from joblib import Parallel, delayed
-from classes.image import Image
-from classes.matches import Matches
+from archv.classes.image import Image
+from archv.classes.matches import Matches
 
 
 
