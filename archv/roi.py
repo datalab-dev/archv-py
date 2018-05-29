@@ -3,7 +3,8 @@
 
 import numpy as np
 import cv2
-import archv.classes
+import argparse
+from classes.image import Image
 
 def parse_arguments ():
     """ Basic parser for the command line arguments """
@@ -14,9 +15,9 @@ def parse_arguments ():
 
 def main(args):
 
-    img = cv2.imread(img.image) 
+    img = Image(args.image) 
 
-    r = cv2.selectROI(img)
+    r = cv2.selectROI(img.image)
 
     cropped = img.image[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
 
