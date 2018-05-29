@@ -25,13 +25,9 @@ def parse_arguments():
     return args
 
 def process_image(fname, params):
-    ofile = args.o + "/" + fname.split('/')[-1].split('.')[0] + '.yml'
-    print ("processing ", ofile)
-
     img = Image(fname) 
     img.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
-    img.write_to_file(ofile)
-    return
+    return img
 
 def main(args):
 
@@ -45,7 +41,13 @@ def main(args):
     # read SURF parameters into dictionary
     params = yaml.load(open(args.p))
 
-    Parallel(n_jobs=args.n)(delayed(process_image)(fname, params) for fname in filenames)
+    imgs = Parallel(n_jobs=args.n)(delayed(process_image)(fname, params) for fname in filenames)
+
+    for img in imgs:
+        ofile = args.o + "/" + img.name.split('/')[-1].split('.')[0] + '.yml'
+        print ("processing ", ofile)
+        img.write_to_file(ofile)
+
         
 if __name__ == "__main__":
     start = time.time()    
