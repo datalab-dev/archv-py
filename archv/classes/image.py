@@ -10,6 +10,7 @@ class Image():
         self.image = None
         if image != None:
             self.image = cv2.imread(image, 0)
+        self.name = image
         self.keypoints = []
         self.descriptors = []
 
