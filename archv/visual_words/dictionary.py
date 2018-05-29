@@ -31,12 +31,6 @@ def parse_arguments():
     args = parser.parse_args()
     return args
 
-def get_descriptors(fname):
-    img = Image(None)
-    img.read_from_file(fname)
-    return img.descriptors
-
-
 def main(args):
 
     # get 300 keypoint files at random
@@ -47,7 +41,12 @@ def main(args):
     bow = cv2.BOWKMeansTrainer(args.s)
 
     # get list of all descriptors for the sample
-    dlist = Parallel(n_jobs=args.n)(delayed(get_descriptors)(fname) for fname in filenames) 
+    dlist = []
+    for fname in filenames:
+        img = Image(None)
+        img.read_from_file(fname)
+        if not img.descriptors is None:
+            dlist.append(img.descriptors)
 
     # load all descriptors into numpy matrix
     td = []
