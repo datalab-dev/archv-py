@@ -49,13 +49,17 @@ class Image():
         kps = np.array(kps)
 
         cv_file = cv2.FileStorage(ofile, cv2.FILE_STORAGE_WRITE)
+        cv_file.write("num_keypoints", len(self.keypoints))
         cv_file.write("min_hessian", self.minh)
         cv_file.write("octaves", self.octaves)
         cv_file.write("layers", self.layers)
         cv_file.write("min_size", self.mins)
         cv_file.write("min_response", self.minr)
-        cv_file.write("keypoints", kps)
-        cv_file.write("descriptors", self.descriptors)
+
+	if len(self.keypoints) > 0:
+            cv_file.write("keypoints", kps)
+            cv_file.write("descriptors", self.descriptors)
+
         cv_file.release()
         return
 
