@@ -56,8 +56,8 @@ class Image():
         cv_file.write("min_size", self.mins)
         cv_file.write("min_response", self.minr)
 
-	if len(self.keypoints) > 0:
-            cv_file.write("keypoints", kps)
+        if len(self.keypoints) > 0:
+            cv_file.write("keypoints", kps) 
             cv_file.write("descriptors", self.descriptors)
 
         cv_file.release()
