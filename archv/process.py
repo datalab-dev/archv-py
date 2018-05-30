@@ -8,6 +8,7 @@ import yaml
 import os
 import glob
 import time
+from copy import copy, deepcopy #oh boy
 from joblib import Parallel, delayed
 from classes.image import Image
 
@@ -25,7 +26,9 @@ def parse_arguments():
     return args
 
 def process_image(img, params):
+    ofile = args.o + "/" + img.name.split('/')[-1].split('.')[0] + '.yml'
     img.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
+    img.write_to_file(ofile)
 
 def main(args):
 
@@ -48,12 +51,7 @@ def main(args):
         images.append(image)
 
 
-    Parallel(n_jobs=args.n)(delayed(process_image)(image, params) for image in images)
-
-    print ("writing to files ")
-    for image in images:
-        ofile = args.o + "/" + image.name.split('/')[-1].split('.')[0] + '.yml'
-        image.write_to_file(ofile)
+    Parallel(n_jobs=args.n)(delayed(process_image)(img, params) for img in images)
 
         
 if __name__ == "__main__":
