@@ -36,6 +36,7 @@ def main(args):
 
     filenames = glob.glob(os.path.join(args.k, "*.yml"))
     for fname in filenames:
+        print (fname)
         img2 = Image(None)
         img2.read_from_file(fname)
 
@@ -49,7 +50,7 @@ def main(args):
 
         score = len(matcher.ransac_matches)
 
-        if score > 0:
+        if score > 1:
             names.append(fname.split('/')[-1].split('.')[0])
             scores.append(score)
 
