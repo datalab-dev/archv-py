@@ -25,7 +25,6 @@ def parse_arguments():
     return args
 
 def process_image(img, params):
-    print ("procesing ", img.name)
     img.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
 
 def main(args):
@@ -42,13 +41,16 @@ def main(args):
 
     images = []
     # get a list of Images  
-    for fname in filenames:
+    for i, fname in enumerate(filenames):
+        if i % 50 == 0:
+           print ("initializing image class for: ", i, fname)
         image = Image(fname)
         images.append(image)
 
 
     Parallel(n_jobs=args.n)(delayed(process_image)(image, params) for image in images)
 
+    print ("writing to files ")
     for image in images:
         ofile = args.o + "/" + image.name.split('/')[-1].split('.')[0] + '.yml'
         image.write_to_file(ofile)
