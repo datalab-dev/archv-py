@@ -11,10 +11,13 @@ import numpy as np
 import cv2
 import yaml
 import argparse
+import os
+import sys
 from matplotlib import pyplot as plt
-from classes.image import Image
-from classes.matches import Matches
-from filter import *
+
+sys.path.append(os.path.abspath(os.path.join('..')))
+from archv.classes.image import Image
+from archv.classes.matches import Matches
 
 
 def parse_arguments ():

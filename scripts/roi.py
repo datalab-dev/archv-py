@@ -3,8 +3,12 @@
 
 import numpy as np
 import cv2
+import os
+import sys
 import argparse
-from classes.image import Image
+
+sys.path.append(os.path.abspath(os.path.join('..')))
+from archv.classes.image import Image
 
 def parse_arguments ():
     """ Basic parser for the command line arguments """

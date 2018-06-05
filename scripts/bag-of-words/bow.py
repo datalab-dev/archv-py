@@ -10,11 +10,17 @@ import cv2
 import argparse
 import yaml
 import os
+import sys
 import glob
 import time
 from scipy.spatial import distance
 from random import shuffle
 from joblib import Parallel, delayed
+
+
+# so that relative path to archv can be used
+sys.path.append(os.path.abspath(os.path.join('../..')))
+
 from archv.classes.image import Image
 from archv.classes.matches import Matches
 
