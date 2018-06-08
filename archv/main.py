@@ -50,7 +50,7 @@ def find_matches(fname, params):
 
         score = len(matcher.ransac_matches)
 
-        if score > 1:
+        if score > 0:
             names.append(keys.split('/')[-1].split('.')[0])
             scores.append(score)
 
