@@ -62,8 +62,8 @@ class Matches():
         pts2 = np.array(points2)
 
         # get inliers matrix
-        # need minimum of 4 points
-        if len(pts) > 4 and len(pts2) > 4:
+        # need minimum of 7 points
+        if len(pts) > 7 and len(pts2) > 7:
             fundamental, inliers = cv2.findFundamentalMat(pts,pts2,cv2.RANSAC)
             # use inliers to extract only the matches that are inliers
             for i, inlier in enumerate(inliers):
