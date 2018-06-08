@@ -8,39 +8,36 @@ import yaml
 import os
 import glob
 import time
-from copy import copy, deepcopy #oh boy
 from joblib import Parallel, delayed
 from classes.image import Image
 
 
 def parse_arguments():
-    """ Simple parser for command line arguments """
-    parser = argparse.ArgumentParser()
+    """ Simple parser for yml settings file """
+    params= yaml.load(open("settings.yml"))
+    return params
 
-    parser.add_argument("-i", required=True, help="path to image directory", type=str)
-    parser.add_argument("-o", required=True, help="path to output directory to store keypoint files", type=str)
-    parser.add_argument("-p", required=True, help="path to parameter file for surf", type=str)
-    parser.add_argument("-n", default=1, help="number of cores", type=int)
+def print_parameters(params):
+    print ("images: ", params["imagedir"], " keypoints: ", params["keypointdir"])
+    print ("num_cores: ", params["ncores"], " ratio: ", params["ratio"])
+    print ("SURF: ", params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
 
-    args = parser.parse_args()
-    return args
 
 def process_image(img, params):
     ofile = args.o + "/" + img.name.split('/')[-1].split('.')[0] + '.yml'
     img.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
     img.write_to_file(ofile)
 
-def main(args):
+def main(params):
+    print_parameters(params)
 
     # get list of all images in imagedirectory
-    filenames = glob.glob(os.path.join(args.i, "*.jpg"))
+    filenames = glob.glob(os.path.join(params["imagedir"], "*.jpg"))
 
     # if doesn't exist, create output directory
-    if not os.path.exists(args.o):
-        os.makedirs(args.o)
+    if not os.path.exists(params["keypointdir"]):
+        os.makedirs(params["keypointdir"])
 
-    # read SURF parameters into dictionary
-    params = yaml.load(open(args.p))
 
     images = []
     # get a list of Images  
@@ -56,8 +53,8 @@ def main(args):
         
 if __name__ == "__main__":
     start = time.time()    
-    args = parse_arguments()
-    main(args)
+    params = parse_arguments()
+    main(params)
     print ("Elapsed time: ", time.time() - start)
 
 
