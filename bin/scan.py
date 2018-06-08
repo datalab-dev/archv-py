@@ -6,11 +6,16 @@ import cv2
 import argparse
 import yaml
 import os
+import sys
 import glob
 import time
 from joblib import Parallel, delayed
-from classes.image import Image
-from classes.matches import Matches
+
+
+sys.path.append(os.path.abspath(os.path.join('..')))
+
+from archv.classes.image import Image
+from archv.classes.matches import Matches
 
 
 

@@ -1,0 +1,18 @@
+## paths
+imagedir: /path/to/dir
+keypointdir: /path/to/dir
+outputfile: results.csv #used in main only
+
+## setup
+ncores: 1
+ratio: .75
+
+## surf
+min_hessian: 3000
+octaves: 5
+layers: 5
+min_size: 75
+min_response: 100.
+
+
+

@@ -15,17 +15,27 @@ from classes.matches import Matches
 
 
 def parse_arguments():
-    """ Simple parser for command line arguments """
-    parser = argparse.ArgumentParser()
+    """ Simple parser for yml settings file """
+    params= yaml.load(open("settings.yml"))
+    return params
 
-    parser.add_argument("-i", required=True, help="path to input image directory", type=str)
-    parser.add_argument("-k", required=True, help="path to keypoints for image directory", type=str)
-    parser.add_argument("-p", required=True, help="path to parameter file for surf", type=str)
-    parser.add_argument("-o", default="results.csv", help="path to outputfile", type=str)
-    parser.add_argument("-n", default=1, help="number of cores", type=int)
+def print_parameters(params):
+    print ("images: ", params["imagedir"], " keypoints: ", params["keypointdir"], " output: ", params["outputfile"])
+    print ("num_cores: ", params["ncores"], " ratio: ", params["ratio"])
+    print ("SURF: ", params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
 
-    args = parser.parse_args()
-    return args
+def sort_results(names, scores):
+    matches = []
+
+    scores = np.array(scores)
+    names = np.array(names)
+    indexs = scores.argsort()
+    names = names[indexs]
+    scores = scores[indexs]
+    for i in range(len(names)):
+        matches.insert(0, names[i] + " " + str(scores[i]))
+    return ",".join(matches)
+
 
 def find_matches(fname, params):
 
@@ -54,35 +64,25 @@ def find_matches(fname, params):
             names.append(keys.split('/')[-1].split('.')[0])
             scores.append(score)
 
-    scores = np.array(scores)
-    names = np.array(names)
-    indexs = scores.argsort()
-    names = names[indexs]
-    scores = scores[indexs]
-    matches = []
-    for i in range(len(names)):
-        matches.insert(0, names[i] + " " + str(scores[i]))
-    results = ",".join(matches)
-
+    results = sort_results(names, scores)
     return results
 
-def main(args):
-    params = yaml.load(open(args.p))
-    filenames = glob.glob(os.path.join(args.i, "*.jpg"))
+def main(params):
+    print_parameters(params)
+    filenames = glob.glob(os.path.join(params["imagedir"], "*.jpg"))
 
     full = []
-    ofile = open(args.o, "w")
+    full = Parallel(n_jobs=params["ncores"])(delayed(find_matches)(fname, params) for fname in filenames)
 
-    full = Parallel(n_jobs=args.n)(delayed(find_matches)(fname, params) for fname in filenames)
-
+    ofile = open(params["outputfile"], "w")
     print (full, file=ofile)
 
 
 
 if __name__ == "__main__":
     start = time.time()
-    args = parse_arguments()
-    main(args)
+    params = parse_arguments()
+    main(params)
     print ("Time Elapsed: ", time.time() - start)
 
 
