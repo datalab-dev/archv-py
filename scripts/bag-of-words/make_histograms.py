@@ -48,7 +48,7 @@ def find_best_match(descriptor, vocab):
             min_index = i
     return min_index
 
-def process_files(fname, vocab):
+def process_files(output, fname, vocab):
     # read in keypoints
     print (fname)
     img = Image(None)
@@ -65,8 +65,11 @@ def process_files(fname, vocab):
             hist.append(str(index))
         res = ",".join(hist)
 
+    ofile = output + fname.split('/')[-1]
+    o = open (ofile, "w")
+    print (res, file=o)
+    print("wrote to file: ", ofile)
 
-    return fname, res
 
     
 
@@ -91,16 +94,8 @@ def main(args):
     if not os.path.exists(args.o):
         os.makedirs(args.o)
 
-    fnames, results = Parallel(n_jobs=args.n)(delayed(process_files)(fname, vocab) for fname in filenames)
+    Parallel(n_jobs=args.n)(delayed(process_files)(args.o, fname, vocab) for fname in filenames)
     
-    # for each histogram
-    for res in results:
-        # write histogram to file
-        ofile = args.o + fname.split('/')[-1]
-        o = open (ofile, "w")
-        print (res, file=o)
-        print(fname, ofile)
-
 if __name__ == "__main__":
     start = time.time()
     args = parse_arguments()
