@@ -50,6 +50,7 @@ def find_best_match(descriptor, vocab):
 
 def process_files(fname, vocab):
     # read in keypoints
+    print (fname)
     img = Image(None)
     img.read_from_file(fname)
 

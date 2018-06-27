@@ -46,6 +46,7 @@ def main(args):
     bow = cv2.BOWKMeansTrainer(args.s)
 
     # get list of all descriptors for the sample
+    print ("getting descriptors from random sample")
     dlist = []
     for fname in filenames:
         img = Image(None)
@@ -61,10 +62,13 @@ def main(args):
     td = np.array(td)
 
     # cluster the descriptors to vocab size
+    print ("clustering using kmeans")
     bow.add(td)
     vocab = bow.cluster()
+    print ("clustered")
 
     #write to file
+    print ("writing to file", args.o)
     dict_file = cv2.FileStorage(args.o, cv2.FILE_STORAGE_WRITE)
     dict_file.write("vocabulary", vocab)
 

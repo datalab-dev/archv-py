@@ -2,4 +2,4 @@ __pycache__/
 *.pyc
 *.pyo
 output/
-*.jpg
+./archv/settings.yml
