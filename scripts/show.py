@@ -19,6 +19,7 @@ import os
 import sys
 import argparse
 import yaml
+import time
 
 # so that relative path to archv can be used
 sys.path.append(os.path.abspath(os.path.join('..')))
@@ -54,12 +55,16 @@ def main(args):
     else:
         if args.p:
             params = yaml.load(open(args.p))
+            start = time.time()
             img.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
+            end = time.time()
+            print ("time elapsed: ", end - start)
         else:
             img.compute_and_filter(args.minh, args.o, args.l, args.s, args.r)
 
 
     oimg = cv2.drawKeypoints(img.image, img.keypoints, None, (255,0,0),4)
+    print ("number of keypoints: ", len(img.keypoints))
 
     cv2.imshow("Image", oimg)
     cv2.waitKey(0)

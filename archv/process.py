@@ -48,7 +48,7 @@ def main(params):
         images.append(image)
 
 
-    Parallel(n_jobs=args.n)(delayed(process_image)(img, params) for img in images)
+    Parallel(n_jobs=params["ncores"])(delayed(process_image)(img, params) for img in images)
 
         
 if __name__ == "__main__":
