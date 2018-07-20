@@ -24,7 +24,7 @@ def print_parameters(params):
 
 
 def process_image(img, params):
-    ofile = args.o + "/" + img.name.split('/')[-1].split('.')[0] + '.yml'
+    ofile = params["keypointdir"] + "/" + img.name.split('/')[-1] + '.yml'
     img.compute_and_filter(params["min_hessian"], params["octaves"], params["layers"], params["min_size"], params["min_response"])
     img.write_to_file(ofile)
 
@@ -33,6 +33,7 @@ def main(params):
 
     # get list of all images in imagedirectory
     filenames = glob.glob(os.path.join(params["imagedir"], "*.jpg"))
+    filenames.extend(glob.glob(os.path.join(params["imagedir"], "*.tif")))
 
     # if doesn't exist, create output directory
     if not os.path.exists(params["keypointdir"]):

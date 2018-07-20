@@ -1,6 +1,6 @@
 ## paths
-imagedir: /path/to/dir
-keypointdir: /path/to/dir
+imagedir: /Users/arthurkoehl/tiff-jpg/images/ 
+keypointdir: /Users/arthurkoehl/tiff-jpg/keypoints/
 outputfile: results.csv #used in main only
 
 ## setup
