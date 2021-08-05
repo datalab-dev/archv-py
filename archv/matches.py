@@ -1,11 +1,37 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import cv2
-from .image import Image
+
+from archv.image import Image
 
 class Matches():
+    """
+    A class to handle computing matches between two sets of keypoint descriptors
+
+    Attributes
+    ----------
+    image1: Image
+        archv.Image class with computed keypoints and descriptors
+    image2: Image
+        archv.Image class with computed keypoints and descriptors
+    good_matches1: list
+        List of matches that pass the ratio test
+    good_matches2: list
+        List of matches that pass the ratio test
+    symm_matches: list
+        List of matches that pass the symmetry test
+    ransac_matches: list
+        List of matches that pass the ransac test
+
+    Methods
+    -------
+    ratio_test():
+        returns matches that pass ratio test
+    symmetry_test():
+        returns matches that pass symmetry test
+    ransace_test()
+        returns matches that pass ransac test
+
+    """
 
     def __init__(self, img1, img2):
         self.image1 = img1 
