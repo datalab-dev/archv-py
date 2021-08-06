@@ -22,13 +22,11 @@ class Image():
 
     Methods
     -------
-    filter_keypoints(mins, minr):
-        filters keypoints that are smaller than mins or minr
-    computer_and_filter(minh, octaves, layers, mins, minr):
+    compute_and_filter(minh, octaves, layers, mins, minr):
        computes and filters keypoints for an image based on SURF parameters
     read_from_file(ifile):
        reads keypoints and descriptors for an image from yaml file
-    write_to_file(oftile):
+    write_to_file(ofile):
        writes keypoints and descriptors for an image to yaml file
     
     """
@@ -36,15 +34,17 @@ class Image():
     def __init__(self, imagepath, params={
             'minh':2000, 'minr':500.0, 'mins':75, 'octaves':8, 'layers':8}):
 
-        # if path is yml (load from yml)
-        # TODO
-
-        # else if image is jpg, png, pdf etc..
-        self.image = cv2.imread(imagepath, 0)
-        self.name = imagepath
-        self.params = params
-        self.keypoints, self.descriptors = self.compute_and_filter()
-
+        if imagepath.endswith(".yml"):
+            # if yml file specified, read attributes from file
+            self.params = params
+            self.keypoints = []
+            self.descriptors = []
+            self.read_from_file(imagepath)
+        else:
+            self.image = cv2.imread(imagepath, 0)
+            self.name = imagepath
+            self.params = params
+            self.keypoints, self.descriptors = self.compute_and_filter()
 
     def compute_and_filter (self):
         """ Compute SURF keypoints for the image """
@@ -55,7 +55,7 @@ class Image():
 
         # filter keypoints
         self.keypoints = [k for k in self.keypoints 
-                if k.size > self.params["minhs"] and 
+                if k.size > self.params["mins"] and 
                 k.response > self.params["minr"]] 
 
         # get descriptors
@@ -82,6 +82,7 @@ class Image():
         kps = np.array(kps)
 
         cv_file = cv2.FileStorage(ofile, cv2.FILE_STORAGE_WRITE)
+        cv_file.write("filename", self.name)
         cv_file.write("num_keypoints", len(self.keypoints))
         cv_file.write("min_hessian", self.params["minh"])
         cv_file.write("octaves", self.params["octaves"])
@@ -103,6 +104,7 @@ class Image():
         kps = np.array([])
         descriptors = np.array([])
         cv_file = cv2.FileStorage(ifile, cv2.FILE_STORAGE_READ)
+        self.name = cv_file.getNode("filename")
         self.params["minh"] = cv_file.getNode("min_hessian")
         self.params["octaves"] = cv_file.getNode("octaves")
         self.params["layers"] = cv_file.getNode("layers")
