@@ -4,13 +4,23 @@ https://datalab.ucdavis.edu/archv/
 
 # Setup for development
 
-## 1. Install Pyenv
+## 1. Install Appropriate Python version 3.8+
 
-On MacOS:  
-`brew install pyenv`
+I recommend using homebrew for this if on a mac.
+That way you can use homebrew to install opencv.
+Homebrew's opencv has the nonfree stuff (SURF)
+whereas opencv-python doesn't come with nonfree stuff. 
+Which means they arent dependencies for this project, and can't be used.
+This is very inconveniant
+Installing opencv will also install the cv2.so to the homebrew installed python
+```
+brew install python3
+brew install opencv
+```
 
-Otherwise follow instructions from here:  
-[https://github.com/pyenv/pyenv-installer](https://github.com/pyenv/pyenv-installer)
+Otherwise you need to install opencv from source and copy the `.so` to the appropriate place. 
+See this for reference:
+[https://docs.opencv.org/4.5.2/dd/dd5/tutorial_py_setup_in_fedora.html](https://docs.opencv.org/4.5.2/dd/dd5/tutorial_py_setup_in_fedora.html)
 
 ## 2. Install Poetry
 
@@ -24,15 +34,7 @@ open shell and test with:
 
 You may need to add poetry to your PATH in your shell config file
 
-## 3. Set project specific python version with pyenv to 3.8.10
-
-Install 3.8.10 with pyenv:  
-`pyenv install 3.8.10`
-
-Set local version to 3.8.10:  
-`pyenv local 3.8.10`
-
-## 4. Install dependencies with poetry
+## 3. Install dependencies with poetry
 
 run:  
 `poetry install`
