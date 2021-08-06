@@ -6,11 +6,11 @@ authors = ["Arthur Koehl <avkoehl@ucdavis.edu>, Carl Stahmer <cstahmer@ucdavis.e
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 PyYAML = "^5.4.1"
-scipy = "^1.7.1"
 opencv-python = "^4.5.3"
 opencv-contrib-python = "^4.5.3"
+numpy = "^1.21.1"
 
 [tool.poetry.dev-dependencies]
 ipython = "^7.26.0"
