@@ -4,23 +4,27 @@ https://datalab.ucdavis.edu/archv/
 
 # Setup for development
 
-## 1. Install Appropriate Python version 3.8+
+## 1. Install appropriate python version
 
-I recommend using homebrew for this if on a mac.
-That way you can use homebrew to install opencv.
-Homebrew's opencv has the nonfree stuff (SURF)
-whereas opencv-python doesn't come with nonfree stuff. 
-Which means they arent dependencies for this project, and can't be used.
-This is very inconveniant
-Installing opencv will also install the cv2.so to the homebrew installed python
+Project requires python 3.8+ (see pyproject.toml)
+
+I recommend using pyenv to manage python versions. 
+However, if you will use homebrew to install opencv you *probably* need to use
+homebrew to install an appropriate python version.
+
+### 1. Using pyenv
+
+Install pyenv: [https://github.com/pyenv/pyenv-installer](https://github.com/pyenv/pyenv-installer)
+Install an appropriate python version:
 ```
-brew install python3
-brew install opencv
+pyenv install 3.8.10
+pyenv local 3.8.10
 ```
 
-Otherwise you need to install opencv from source and copy the `.so` to the appropriate place. 
-See this for reference:
-[https://docs.opencv.org/4.5.2/dd/dd5/tutorial_py_setup_in_fedora.html](https://docs.opencv.org/4.5.2/dd/dd5/tutorial_py_setup_in_fedora.html)
+### 2. Using homebrew
+```
+brew install python@3.9
+```
 
 ## 2. Install Poetry
 
@@ -49,6 +53,35 @@ Simply run `poetry add <package_name>`.
 Don't forget to commit the resulting changes to pyproject.toml and poetry.lock!
 
 
+## 4. Build Opencv and include cv2.so in site-packages
+
+First find the location of the site-packages directory for this project.
+```
+poetry run python -m site
+```
+find the one in the default pypoetry virtualenv location
 
 
+### 1. From Source
 
+Follow instructions from this page:
+https://docs.opencv.org/4.5.2/dd/dd5/tutorial_py_setup_in_fedora.html
+
+Then copy the cv2.so to site-packages directory from above
+```
+cp cv2.so <site-packages-dir>
+```
+
+
+### 2. With Homebrew
+
+install opencv
+```
+brew uninstall opencv #in case there was a version built before installing brew python
+brew install opencv 
+```
+
+copy the cv2.so to site-packages directory from above
+```
+cp /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/*.so <site-packages-dir>
+```
