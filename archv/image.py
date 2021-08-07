@@ -28,17 +28,19 @@ class Image():
        reads keypoints and descriptors for an image from yaml file
     write_to_file(ofile):
        writes keypoints and descriptors for an image to yaml file
-    
+    draw_keypoints(ofile):
+       saves new image that has keypoints drawn on
     """
 
     def __init__(self, imagepath, params={
-            'minh':2000, 'minr':500.0, 'mins':75, 'octaves':8, 'layers':8}):
+        'minh':2000, 'minr':500.0, 'mins':75, 'octaves':8, 'layers':8}):
 
         if imagepath.endswith(".yml"):
             # if yml file specified, read attributes from file
             self.params = params
             self.keypoints = []
             self.descriptors = []
+            self.image = None
             self.read_from_file(imagepath)
         else:
             self.image = cv2.imread(imagepath, 0)
@@ -46,11 +48,16 @@ class Image():
             self.params = params
             self.keypoints, self.descriptors = self.compute_and_filter()
 
+    def draw_keypoints(self, ofile):
+        if self.image is not None:
+            oimg = cv2.drawKeypoints(self.image, self.keypoints, None, (255,0,0),4)
+            cv2.imwrite(ofile, oimg)
+
     def compute_and_filter (self):
         """ Compute SURF keypoints for the image """
 
-        surf = cv2.xfeatures2d.SURF_create(self.params["minh"], 
-                int(self.params["octaves"]), self.params["layers"])
+        surf = cv2.xfeatures2d.SURF_create(int(self.params["minh"]), 
+                int(self.params["octaves"]), int(self.params["layers"]))
         self.keypoints = surf.detect(self.image, None)
 
         # filter keypoints
