@@ -2,7 +2,15 @@
 Archv is the python version of the archive-vision project:
 https://datalab.ucdavis.edu/archv/
 
-# Setup for development
+# Install
+
+Follow instructions in setup.
+Then run  
+```
+poetry build 
+pip3 install dist/archv-0.1.0-py3-none-any.whl #change version appropriately
+```
+# Setup 
 
 ## 1. Install appropriate python version
 
