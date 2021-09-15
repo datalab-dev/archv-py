@@ -89,7 +89,8 @@ brew uninstall opencv #in case there was a version built before installing brew 
 brew install opencv 
 ```
 
-copy the cv2.so to site-packages directory from above
+copy the cv2 directory from /usr/local/Cellar/opencv/4.5.3_2/lib/python3.9/site-packages/cv2 to your python site-packages:
 ```
-cp /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/*.so <site-packages-dir>
+cp /usr/local/Cellar/opencv/4.5.3_2/lib/python3.9/site-packages/cv2/ /Users/arthurkoehl/opt/anaconda3/envs/py39/lib/python3.9/site-packages/
+
 ```
