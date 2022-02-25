@@ -125,7 +125,7 @@ class Image():
         self.keypoints = []
         if not kps is None:
             for p in kps:
-                point = cv2.KeyPoint(x=int(p[0]), y=int(p[1]), size=int(p[2]),
+                point = cv2.KeyPoint(x=int(p[0]), y=int(p[1]), _size=int(p[2]),
                         angle=int(p[3]), response=int(p[4]), 
                         octave=int(p[5]), class_id=int(p[6]))
                 self.keypoints.append(point)
