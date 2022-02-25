@@ -29,7 +29,7 @@ def archv_matches(img1, img2):
 
 # impath1 and impath2 need to contain the images, not just the yml descriptors keypoints files!
 def draw_archv_matches(impath1, impath2, ofile, params= {
-        'minh':2000, 'minr':500.0, 'mins':75, 'octaves':8, 'layers':8}):
+        'minh':2000, 'minr':500.0, 'mins':75, 'layers':8}):
     img1 = Image(impath1, params=params)
     img2 = Image(impath2, params=params)
 
