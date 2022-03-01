@@ -1,6 +1,5 @@
 *.pyc
 *.pyo
-./archv/settings.yml
 .DS_Store
 .python-version
-./.idea
+/dist
