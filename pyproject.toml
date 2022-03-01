@@ -1,13 +1,12 @@
 [tool.poetry]
 name = "archv"
-version = "0.1.0"
+version = "0.2.0"
 description = "Content Based Image Retrieval for Images of Historical Materials"
 authors = ["Arthur Koehl <avkoehl@ucdavis.edu>, Carl Stahmer <cstahmer@ucdavis.edu>"]
 license = ""
 
 [tool.poetry.dependencies]
 python = "^3.8"
-PyYAML = "^5.4.1"
 numpy = "^1.21.1"
 
 [tool.poetry.dev-dependencies]
