@@ -8,6 +8,7 @@ license = ""
 [tool.poetry.dependencies]
 python = "^3.8"
 numpy = "^1.21.1"
+opencv-python = "^4.5.5"
 
 [tool.poetry.dev-dependencies]
 ipython = "^7.26.0"

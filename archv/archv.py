@@ -47,8 +47,8 @@ def ratio_test(matches, r=0.75):
 
 def sym_test(matches1, matches2):
     sym = []
-    for m in matches:
-        for t in matches
+    for m in matches1:
+        for t in matches2:
           if m.queryIdx == t.trainIdx and t.queryIdx == m.trainIdx:
               sym.append(m)
               break
@@ -64,8 +64,8 @@ def ransac_test(matches, kp1, kp2):
     if len(points1) < 7 or len(points2) < 7:
         return []
 
-    fun,inliers = cv2.findFundamentalMat(poitns1, points2, cv2.RANSAC)
+    fun,inliers = cv2.findFundamentalMat(points1, points2, cv2.RANSAC)
     for i, inlier in enumerate(inliers):
         if inlier != 0:
-            ransac_matches.append(matches[i]
+            ransac_matches.append(matches[i])
     return ransac_matches
