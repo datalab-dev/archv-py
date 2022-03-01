@@ -1,17 +1,56 @@
 import numpy as np
 import cv2
 
-def compute_and_filter(image, minr, mins, detector):
+def compute_and_filter(image, minr, mins, detector, ofile=None):
     kps = detector.detect(image, None)
     # filter keypoints on size and response
     kps = [k for k in kps if k.size > mins and k.response > minr]
     kps, descriptors = detector.compute(image, kps)
+
+    if ofile:
+        write_to_file(kps, descriptors, minr, mins, ofile)
+
     return (kps, descriptors)
 
-def archv_match(seed, image, minr, mins, detector, keep=False):
-    kps1,desc1 = compute_and_filter(seed, minr, mins, detector)
-    kps2,desc2 = compute_and_filter(image, minr, mins, detector)
+def write_to_file(keys, descriptors, minr, mins, ofile):
+    kps = []
+    for p in keys:
+        row = (p.pt[0], p.pt[1], p.size, p.angle, p.response, p.octave, p.class_id)
+        kps.append(row)
+    kps = np.array(kps)
 
+    cv_file = cv2.FileStorage(ofile, cv2.FILE_STORAGE_WRITE)
+    cv_file.write("num_keypoints", len(keys)) 
+    cv_file.write("min_size", mins)
+    cv_file.write("min_response", minr)
+
+    # dont see how to get the parameters from detector 
+    # will have to save the config elsewhere (maybe in odir name?)
+
+    if len(keys) > 0:
+        cv_file.write("keypoints", kps)
+        cv_file.write("descriptors", descriptors)
+    cv_file.release()
+    return
+
+def read_from_file(file):
+    kps = np.array([])
+    desc = np.array([])
+    cv_file = cv2.FileStorage(ifile, cv2.FILE_STORAGE_READ)
+    kps = cv_file.getNode("keypoints").mat()
+    desc = cv_file.getNode("descriptors").mat()
+
+    keys = []
+    if not kps is None:
+        for p in kps:
+            point = cv2.KeyPoint(x=int(p[0]), y=int(p[1]), size=int(p[2]),
+                    angle=int(p[3]), response=int(p[4]), 
+                    octave=int(p[5]), class_id=int(p[6]))
+            keys.append(point)
+
+    return keys, descriptors
+
+def archv_match_precomputed(kp1,kp2, desc1, desc2):
     bf = cv2.BFMatcher()
     m1 = bf.knnMatch(desc1, desc2, k=2)
     m2 = bf.knnMatch(desc2, desc1, k=2)
@@ -24,7 +63,16 @@ def archv_match(seed, image, minr, mins, detector, keep=False):
     sym = sym_test(m1, m2)
     
     # ransac
-    matches = ransac_test(sym, kps1, kps2)
+    matches = ransac_test(sym, kp1, kp2)
+    return matches
+
+
+def archv_match(seed, image, minr, mins, detector, keep=False):
+    kps1,desc1 = compute_and_filter(seed, minr, mins, detector)
+    kps2,desc2 = compute_and_filter(image, minr, mins, detector)
+
+    matches = archv_match_precomputed(kps1, kps2, desc1, desc2)
+
     if keep:
         return [matches, kps1, desc1, kps2, desc2]
     else:
