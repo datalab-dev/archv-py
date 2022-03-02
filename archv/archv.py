@@ -33,7 +33,7 @@ def write_to_file(keys, descriptors, minr, mins, ofile):
     cv_file.release()
     return
 
-def read_from_file(file):
+def read_from_file(ifile):
     kps = np.array([])
     desc = np.array([])
     cv_file = cv2.FileStorage(ifile, cv2.FILE_STORAGE_READ)
@@ -48,7 +48,7 @@ def read_from_file(file):
                     octave=int(p[5]), class_id=int(p[6]))
             keys.append(point)
 
-    return keys, descriptors
+    return keys, desc
 
 def archv_match_precomputed(kp1,kp2, desc1, desc2):
     bf = cv2.BFMatcher()
