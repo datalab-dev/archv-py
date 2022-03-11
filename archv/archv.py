@@ -106,10 +106,8 @@ def sym_test(matches1, matches2):
     return sym
 
 def ransac_test(matches, kp1, kp2, method="RANSAC"):
-        """ method can be RANSAC or USAC_MAGSAC """
-    ransac_matches = []
-
     # get points from matches for cv2.findFundamentalMat
+    ransac_matches = []
     points1 = np.array([kp1[m.queryIdx].pt for m in matches])
     points2 = np.array([kp2[m.trainIdx].pt for m in matches])
 
