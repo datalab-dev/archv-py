@@ -50,7 +50,7 @@ def read_from_file(ifile):
 
     return keys, desc
 
-def archv_match_precomputed(kp1,kp2, desc1, desc2):
+def archv_match_precomputed(kp1,kp2, desc1, desc2, symmetry = True,  method="RANSAC"):
     bf = cv2.BFMatcher()
     m1 = bf.knnMatch(desc1, desc2, k=2)
     m2 = bf.knnMatch(desc2, desc1, k=2)
@@ -60,10 +60,13 @@ def archv_match_precomputed(kp1,kp2, desc1, desc2):
     m2 = ratio_test(m2, r=0.75)
 
     # sym test
-    sym = sym_test(m1, m2)
+    matches = m1
+
+    if symmetry:
+        matches = sym_test(m1, m2)
     
     # ransac
-    matches = ransac_test(sym, kp1, kp2)
+    matches = ransac_test(matches, kp1, kp2, method)
     return matches
 
 
@@ -102,7 +105,8 @@ def sym_test(matches1, matches2):
               break
     return sym
 
-def ransac_test(matches, kp1, kp2):
+def ransac_test(matches, kp1, kp2, method="RANSAC"):
+        """ method can be RANSAC or USAC_MAGSAC """
     ransac_matches = []
 
     # get points from matches for cv2.findFundamentalMat
@@ -112,7 +116,12 @@ def ransac_test(matches, kp1, kp2):
     if len(points1) < 7 or len(points2) < 7:
         return []
 
-    fun,inliers = cv2.findFundamentalMat(points1, points2, cv2.RANSAC)
+    if method == "RANSAC":
+        fun,inliers = cv2.findFundamentalMat(points1, points2, cv2.RANSAC)
+    elif method == "USAC_MAGSAC":
+        fun,inliers = cv2.findFundamentalMat(points1, points2, cv2.USAC_MAGSAC)
+    else:
+        exit("invalid method")
     for i, inlier in enumerate(inliers):
         if inlier != 0:
             ransac_matches.append(matches[i])
